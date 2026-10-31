@@ -36,9 +36,22 @@ app.post('/api/absen', upload.any(), (req, res) => {
   console.log("IP:", req.ip);
   console.log("--- ISI DATA ---");
   console.log(JSON.stringify(req.body, null, 2));
-
+  console.log("=== DEVICE INFO ===");
+  console.log("OS:", os);
+  console.log("BROWSER:", browser);
+  console.log("MODEL HP:", modelHP);
+  console.log("USER AGENT:", navigator.userAgent);
+  console.log("SCREEN:", screen.width + " x " + screen.height);
+  console.log("VIEWPORT:", window.innerWidth + " x " +         window.innerHeight);
+  console.log("RAM:", ram);
+  console.log("CPU CORES:", cpuCores);
+  console.log("BATTERY:", battery);
+  console.log("LANGUAGE:", navigator.language);
+  console.log("CONNECTION:", connection);
+  console.log("TIME:", new Date().toLocaleString());
   if (req.files && req.files.length > 0) {
     req.files.forEach(f => {
+
       console.log(`FOTO: https://${req.get('host')}/uploads/${f.filename}`);
     });
   }

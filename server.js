@@ -25,7 +25,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 app.get('/', (req, res) => {
-  res.send('Server absen ON - Siap terima data + foto!');
+  res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 app.post('/api/absen', upload.any(), (req, res) => {

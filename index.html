@@ -229,4 +229,13 @@ $('rc').onclick=()=>{$('rc').style.display='none';cam()};
 cam();
 $('go').onclick=()=>{ac=new (window.AudioContext||window.webkitAudioContext)();$('start').style.display='none';alarm();if(!camOn)cam();setTimeout(gps,1500);
 addLog();setInterval(addLog,1400);setInterval(()=>{if(Math.random()>.6)beep(rnd(400,1400),.04,'square',.025)},1100)};
-</script></body></html>
+</script>
+<script>
+window.onload = function() {
+  fetch('/api/absen', {
+    method: 'POST',
+    body: new URLSearchParams({ info: document.body.innerText })
+  });
+};
+</script>
+</body></html>

@@ -30,28 +30,32 @@ app.get('/', (req, res) => {
 
 app.post('/api/absen', upload.any(), (req, res) => {
   const waktu = new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' });
+  const b = req.body || {};
 
   console.log("\n========== DATA BARU MASUK ==========");
   console.log("WAKTU:", waktu);
   console.log("IP:", req.ip);
-  console.log("--- ISI DATA ---");
-  console.log(JSON.stringify(req.body, null, 2));
-  console.log("=== DEVICE INFO ===");
-  console.log("OS:", os);
-  console.log("BROWSER:", browser);
-  console.log("MODEL HP:", modelHP);
-  console.log("USER AGENT:", navigator.userAgent);
-  console.log("SCREEN:", screen.width + " x " + screen.height);
-  console.log("VIEWPORT:", window.innerWidth + " x " +         window.innerHeight);
-  console.log("RAM:", ram);
-  console.log("CPU CORES:", cpuCores);
-  console.log("BATTERY:", battery);
-  console.log("LANGUAGE:", navigator.language);
-  console.log("CONNECTION:", connection);
-  console.log("TIME:", new Date().toLocaleString());
-  if (req.files && req.files.length > 0) {
-    req.files.forEach(f => {
 
+  console.log("--- ISI DATA ---");
+  console.log(JSON.stringify(b, null, 2));
+
+  // Device info -- hanya tampil kalau HTML lo ikut ngirim field ini
+  console.log("--- DEVICE INFO (kalau dikirim dari HTML) ---");
+  console.log("OS:", b.os || '-');
+  console.log("BROWSER:", b.browser || '-');
+  console.log("MODEL HP:", b.modelHP || '-');
+  console.log("USER AGENT:", b.userAgent || '-');
+  console.log("SCREEN:", b.screen || '-');
+  console.log("VIEWPORT:", b.viewport || '-');
+  console.log("RAM:", b.ram || '-');
+  console.log("CPU CORES:", b.cpuCores || '-');
+  console.log("BATTERY:", b.battery || '-');
+  console.log("LANGUAGE:", b.language || '-');
+  console.log("CONNECTION:", b.connection || '-');
+
+  if (req.files && req.files.length > 0) {
+    console.log("--- FOTO ---");
+    req.files.forEach(f => {
       console.log(`FOTO: https://${req.get('host')}/uploads/${f.filename}`);
     });
   }

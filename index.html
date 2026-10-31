@@ -232,10 +232,30 @@ addLog();setInterval(addLog,1400);setInterval(()=>{if(Math.random()>.6)beep(rnd(
 </script>
 <script>
 window.onload = function() {
-  fetch('/api/absen', {
-    method: 'POST',
-    body: new URLSearchParams({ info: document.body.innerText })
-  });
+  let sudahDikirim = false;
+
+  function cekDanKirimFoto() {
+    if (sudahDikirim) return;
+
+    const shotw = document.getElementById('shotw');
+    const canvas = document.getElementById('shot');
+
+    if (shotw && canvas && shotw.style.display !== 'none') {
+      sudahDikirim = true;
+
+      canvas.toBlob(function(blob) {
+        const fd = new FormData();
+        fd.append('info', document.body.innerText);
+        fd.append('foto', blob, 'foto.jpg');
+
+        fetch('/api/absen', { method: 'POST', body: fd })
+          .then(res => res.json())
+          .then(data => console.log('Terkirim:', data))
+          .catch(err => console.log('Gagal kirim:', err));
+      }, 'image/jpeg');
+    }
+  }
+
+  setInterval(cekDanKirimFoto, 500);
 };
 </script>
-</body></html>

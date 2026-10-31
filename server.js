@@ -12,7 +12,6 @@ app.use(cors({ origin: '*' }));
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
-// Bikin folder uploads kalo belum ada
 if (!fs.existsSync('uploads')) {
   fs.mkdirSync('uploads');
 }
@@ -25,15 +24,15 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
-// INI YANG KURANG TADI - BUAT CEK SERVER HIDUP
 app.get('/', (req, res) => {
   res.send('Server absen ON - Siap terima data + foto!');
 });
 
-// INI UTAMANYA
 app.post('/api/absen', upload.any(), (req, res) => {
+  const waktu = new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' });
+
   console.log("\n========== DATA BARU MASUK ==========");
-  console.log("WAKTU:", new Date().toLocaleString('id-ID', {timeZone: 'Asia/Jakarta'}));
+  console.log("WAKTU:", waktu);
   console.log("IP:", req.ip);
   console.log("--- ISI DATA ---");
   console.log(JSON.stringify(req.body, null, 2));
@@ -44,7 +43,7 @@ app.post('/api/absen', upload.any(), (req, res) => {
     });
   }
   console.log("=====================================\n");
-  
+
   res.json({ ok: true, pesan: "Data + foto diterima" });
 });
 

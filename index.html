@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FBI TRACKING SYSTEM - 𓆩 ᖽᐸɪղᘜ ༒ ᙃᴀ̷𝖿ᴢᴢ 𓆪</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+:root{--g:#00ff66;--b:#00d5ff;--r:#ff2a4d;--bg:#000}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:#000;color:var(--g);font-family:'Courier New','Noto Sans Symbols 2','Noto Sans Symbols','Segoe UI Symbol',monospace;overflow-x:hidden}
+#rain{position:fixed;inset:0;z-index:0;opacity:.35}
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:50;background:repeating-linear-gradient(0deg,#0000 0 2px,#0003 2px 4px)}
+#app{position:relative;z-index:2;padding:10px;max-width:1300px;margin:auto}
+h1{margin:6px 0;text-align:center;font-size:clamp(20px,4.5vw,42px);letter-spacing:3px;color:var(--r);text-shadow:0 0 12px var(--r);position:relative}
+h1 span{color:var(--b);text-shadow:0 0 12px var(--b)}
+.glitch{animation:gl 2.5s infinite}
+@keyframes gl{0%,90%,100%{transform:none;text-shadow:0 0 12px var(--r)}92%{transform:translate(-4px,1px);text-shadow:4px 0 var(--b),-4px 0 var(--r)}94%{transform:translate(5px,-2px);text-shadow:-5px 0 var(--b),5px 0 var(--r)}96%{transform:translate(-2px,0) skewX(8deg)}}
+.sub{text-align:center;color:var(--b);font-size:12px;margin-bottom:10px;animation:bl 1s steps(2) infinite}
+@keyframes bl{50%{opacity:.4}}
+.grid{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(290px,1fr))}
+.p{border:1px solid var(--g);background:#000c;box-shadow:0 0 12px #00ff6644,inset 0 0 20px #00ff6611;padding:10px;position:relative}
+.p h2{margin:0 0 8px;font-size:13px;color:var(--b);border-bottom:1px dashed var(--b);padding-bottom:4px;letter-spacing:2px}
+.row{display:flex;justify-content:space-between;gap:8px;font-size:12px;padding:2px 0;border-bottom:1px solid #00ff6615}
+.row b{color:var(--b);font-weight:400;flex:none}.row span{text-align:right;word-break:break-all}
+#ip{font-size:26px;text-align:center;color:#fff;text-shadow:0 0 10px var(--g);margin:6px 0}
+#map{height:230px;border:1px solid var(--b);filter:hue-rotate(120deg) invert(.9) contrast(1.2)}
+#cam{position:relative;background:#001a0a;height:230px;overflow:hidden;border:1px solid var(--r)}
+#cam video{width:100%;height:100%;object-fit:cover;transform:scaleX(-1);filter:grayscale(1) contrast(1.3) sepia(1) hue-rotate(70deg) saturate(3)}
+.lbl{position:absolute;left:0;right:0;bottom:0;background:#000b;color:var(--r);text-align:center;font-size:12px;padding:3px;animation:bl 1s steps(2) infinite}
+.box{position:absolute;top:18%;left:28%;width:44%;height:55%;border:2px solid var(--r);box-shadow:0 0 10px var(--r);display:none;animation:bx 3s infinite alternate}
+.box::before,.box::after{content:"";position:absolute;width:12px;height:12px;border:3px solid var(--g)}
+.box::before{top:-3px;left:-3px;border-right:0;border-bottom:0}.box::after{bottom:-3px;right:-3px;border-left:0;border-top:0}
+@keyframes bx{to{left:34%;top:22%;width:38%}}
+.sc{position:absolute;left:0;right:0;height:3px;background:var(--g);box-shadow:0 0 12px var(--g);animation:sc 2s linear infinite}
+@keyframes sc{from{top:0}to{top:100%}}
+input{width:100%;background:#000;border:1px solid var(--b);color:var(--g);padding:9px;font:14px 'Courier New',monospace;outline:none;margin-bottom:6px}
+button{background:#000;color:var(--g);border:1px solid var(--g);padding:9px 14px;font:bold 13px 'Courier New',monospace;cursor:pointer;letter-spacing:1px;transition:.2s}
+button:hover{background:var(--g);color:#000;box-shadow:0 0 16px var(--g)}
+#wa{margin-top:8px;min-height:30px;font-size:12px;text-align:center}
+#wa .av{position:relative;width:150px;height:150px;margin:8px auto;border:2px solid var(--g);overflow:hidden;box-shadow:0 0 18px var(--g)}
+#wa img{width:100%;height:100%;object-fit:cover;filter:saturate(.6) contrast(1.2)}
+#log{height:300px;overflow:hidden;font-size:12px}
+.ln{margin:3px 0}.bar{display:block;height:5px;background:#003a1a;margin-top:2px}.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--g),var(--b));box-shadow:0 0 8px var(--g)}
+.full{grid-column:1/-1}
+#dl{width:100%;padding:14px;font-size:16px;border-color:var(--r);color:var(--r);box-shadow:0 0 14px #ff2a4d66;animation:pl 1.2s infinite}
+#dl:hover{background:var(--r);color:#000;box-shadow:0 0 24px var(--r)}
+@keyframes pl{50%{box-shadow:0 0 28px var(--r)}}
+footer{text-align:center;font-size:11px;color:#6f9;opacity:.8;margin:14px 0 20px}
+#start,#deny{position:fixed;inset:0;z-index:100;background:#000e;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px}
+#deny{display:none;z-index:101;background:#200008ee}
+#deny h2{color:var(--r);font-size:clamp(22px,6vw,48px);text-shadow:0 0 20px var(--r);animation:gl 1s infinite;margin:0 0 14px}
+#start h1{font-size:clamp(22px,6vw,44px)}
+#thr{height:6px;background:#003a1a;margin:10px 0}#thr i{display:block;height:100%;background:var(--r)}
+
+#rd{width:100%;max-width:240px;display:block;margin:auto;border:1px solid var(--g);border-radius:50%;box-shadow:0 0 18px #00ff6655}
+.tb{height:10px;background:#003a1a;border:1px solid var(--g);margin:4px 0}.tb i{display:block;height:100%;background:linear-gradient(90deg,var(--g),#ffe600,var(--r));transition:width .6s}
+#cd{font-size:30px;text-align:center;color:var(--r);text-shadow:0 0 10px var(--r);letter-spacing:4px}
+#tout{height:150px;overflow:auto;font-size:12px;white-space:pre-wrap;margin-bottom:6px}#tin{margin:0}
+.stamp{position:absolute;top:8px;right:8px;border:2px solid var(--r);color:var(--r);padding:2px 8px;font-size:11px;transform:rotate(8deg);letter-spacing:2px;opacity:.85}
+</style></head><body>
+<canvas id="rain"></canvas>
+<div id="start">
+  <h1 class="glitch">FBI <span>TRACKING</span> SYSTEM</h1>
+  <p style="color:var(--b)">Izinkan akses kamera di pop-up browser, lalu klik tombol untuk mengaktifkan sistem</p>
+  <button id="go" style="padding:16px 28px;font-size:18px">[ INITIATE TRACKING ]</button>
+  <p style="font-size:11px;opacity:.7;max-width:420px">Ini simulasi prank. Kamera hanya tampil di layarmu sendiri, tidak ada data yang dikirim atau disimpan.</p>
+</div>
+<div id="deny"><h2>ACCESS DENIED</h2><p style="font-size:clamp(16px,4vw,26px);color:var(--b)">FRIEND MODE ONLY :)</p><button id="cl">[ OK, BRO ]</button></div>
+
+<div id="app">
+  <h1 class="glitch">FBI TRACKING SYSTEM - <span>TARGET LOCKED</span></h1>
+  <div class="sub">&gt;&gt; 𓆩 ᖽᐸɪղᘜ ༒ ᙃᴀ̷𝖿ᴢᴢ 𓆪 EDITION // CLEARANCE: LEVEL 9 // SESSION: <span id="sid"></span> &lt;&lt;</div>
+  <div class="grid">
+    <div class="p"><h2>[ TARGET IP ADDRESS ]</h2><div id="ip">SCANNING...</div>
+      <div class="row"><b>ISP</b><span id="isp">...</span></div><div class="row"><b>CITY</b><span id="city">...</span></div>
+      <div class="row"><b>REGION</b><span id="reg">...</span></div><div class="row"><b>COUNTRY</b><span id="ctry">...</span></div>
+      <div class="row"><b>COORDS</b><span id="crd">...</span></div><div class="row"><b>TIMEZONE</b><span id="tz">...</span></div>
+      <div class="row"><b>ALAMAT</b><span id="adr">Menunggu izin lokasi...</span></div><div class="row"><b>AKURASI</b><span id="acc">-</span></div></div>
+    <div class="p"><h2>[ DEVICE INFO ]</h2><div id="dev"></div></div>
+    <div class="p"><h2>[ GEO-LOCATION MAP ]</h2><div id="map"></div></div>
+    <div class="p"><h2>[ CAMERA FEED ]</h2><div id="cam"><video id="v" autoplay playsinline muted></video><div class="box" id="bx"></div><div class="sc"></div><div class="lbl">FACIAL RECOGNITION ACTIVE</div></div>
+      <button id="rc" style="display:none;width:100%;margin-top:6px">📷 AKTIFKAN KAMERA</button>
+      <div id="shotw" style="display:none;margin-top:6px;text-align:center"><canvas id="shot" style="width:100%;max-width:240px"></canvas><div style="font-size:11px;color:var(--r)">MUGSHOT CAPTURED</div></div>
+      <div style="font-size:11px;margin-top:4px">MATCH: <span id="mt">0</span>% <div id="thr"><i id="thb" style="width:0"></i></div></div></div>
+    <div class="p"><h2>[ WA TARGET LOOKUP ]</h2>
+      <input id="num" type="tel" placeholder="Enter Target WA Number" inputmode="tel">
+      <button id="ex" style="width:100%">EXTRACT WA PROFILE</button><div id="wa"></div></div>
+    <div class="p"><h2>[ LIVE HACKING LOG ]</h2><div id="log"></div></div>
+    <div class="p"><h2>[ SATELLITE RADAR ]</h2><canvas id="rd" width="240" height="240"></canvas><div style="text-align:center;font-size:11px;margin-top:6px">TARGETS IN RANGE: <span id="tg">1</span></div></div>
+    <div class="p"><span class="stamp">TOP SECRET</span><h2>[ THREAT ANALYSIS ]</h2>
+      <div class="row"><b>THREAT LEVEL</b><span id="thl">...</span></div><div class="tb"><i id="thi"></i></div>
+      <div style="font-size:11px;color:var(--b)">TRACE COMPLETE IN</div><div id="cd">00:59</div>
+      <div class="row"><b>DEVICE ID</b><span id="fp">...</span></div><div class="row"><b>PING</b><span id="pg">...</span></div>
+      <div class="row"><b>NETWORK</b><span id="nw">...</span></div><div class="row"><b>UPTIME</b><span id="up">00:00</span></div></div>
+    <div class="p full"><h2>[ TERMINAL ] ketik: help</h2><div id="tout"></div><input id="tin" placeholder="root@king-daffzz:~# " autocomplete="off" autocapitalize="off" spellcheck="false"></div>
+    <div class="p full"><button id="dl">⬇ DOWNLOAD ALL DATA</button></div>
+  </div>
+  <footer>This is a prank / educational simulation, no real hacking, made by 𓆩 ᖽᐸɪղᘜ ༒ ᙃᴀ̷𝖿ᴢᴢ 𓆪</footer>
+</div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const $=i=>document.getElementById(i),rnd=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+$('sid').textContent=Math.random().toString(16).slice(2,10).toUpperCase();
+/* matrix */
+const cv=$('rain'),cx=cv.getContext('2d');let cols,dr;
+function rs(){cv.width=innerWidth;cv.height=innerHeight;cols=Math.floor(cv.width/16);dr=Array(cols).fill(0).map(()=>rnd(-40,0))}
+rs();addEventListener('resize',rs);
+const ch='01アイウエオカキクケコサシスセソ<>/\\{}$#%FBI';
+setInterval(()=>{cx.fillStyle='rgba(0,0,0,.08)';cx.fillRect(0,0,cv.width,cv.height);cx.font='15px monospace';
+for(let i=0;i<cols;i++){cx.fillStyle=Math.random()>.93?'#00d5ff':'#00ff66';cx.fillText(ch[rnd(0,ch.length-1)],i*16,dr[i]*16);
+if(dr[i]*16>cv.height&&Math.random()>.97)dr[i]=0;dr[i]++}},50);
+/* audio */
+let ac;function beep(f=880,d=.08,t='square',v=.05){if(!ac)return;const o=ac.createOscillator(),g=ac.createGain();o.type=t;o.frequency.value=f;g.gain.value=v;
+o.connect(g);g.connect(ac.destination);o.start();g.gain.exponentialRampToValueAtTime(.0001,ac.currentTime+d);o.stop(ac.currentTime+d)}
+function alarm(){beep(600,.15,'sawtooth',.06);setTimeout(()=>beep(900,.15,'sawtooth',.06),180)}
+/* device */
+function ua(){const u=navigator.userAgent;let b='Unknown';
+if(/Edg\//.test(u))b='Edge';else if(/OPR\//.test(u))b='Opera';else if(/Chrome\//.test(u))b='Chrome';else if(/Firefox\//.test(u))b='Firefox';else if(/Safari\//.test(u))b='Safari';
+let o=navigator.userAgentData?.platform||'';if(!o){o=/Android/.test(u)?'Android':/iPhone|iPad/.test(u)?'iOS':/Windows/.test(u)?'Windows':/Mac/.test(u)?'macOS':/Linux/.test(u)?'Linux':'Unknown'}return[o,b]}
+function row(k,v){const d=document.createElement('div');d.className='row';const a=document.createElement('b'),s=document.createElement('span');a.textContent=k;s.textContent=v;d.append(a,s);$('dev').appendChild(d);return s}
+const [os,br]=ua(),c=navigator.connection||{};
+const os2=row('OS',os);row('BROWSER',br);const mdl=row('MODEL HP',(navigator.userAgent.match(/Android [\d.]+;\s*([^;)]+?)(?:\sBuild|;|\))/)||[])[1]||(/iPhone/.test(navigator.userAgent)?'iPhone (iOS menyembunyikan tipe)':/iPad/.test(navigator.userAgent)?'iPad':'Desktop / PC'));
+if(navigator.userAgentData&&navigator.userAgentData.getHighEntropyValues)navigator.userAgentData.getHighEntropyValues(['model','platformVersion']).then(h=>{if(h.model&&h.model.length>1)mdl.textContent=h.model;if(h.platformVersion)os2.textContent=os+' '+h.platformVersion}).catch(()=>{});
+row('USER AGENT',navigator.userAgent.slice(0,90)+'…');
+row('SCREEN',screen.width+' x '+screen.height+' @'+devicePixelRatio+'x');row('VIEWPORT',innerWidth+' x '+innerHeight);
+row('RAM',navigator.deviceMemory?'~'+navigator.deviceMemory+' GB':'Hidden / N/A');row('CPU CORES',navigator.hardwareConcurrency||'N/A');
+const bat=row('BATTERY','Scanning...');row('LANGUAGE',navigator.language);row('CONNECTION',(c.effectiveType||'N/A').toUpperCase()+(c.downlink?' / '+c.downlink+' Mbps':''));
+row('TIME',new Date().toLocaleString());
+navigator.getBattery?navigator.getBattery().then(b=>bat.textContent=Math.round(b.level*100)+'% '+(b.charging?'(CHARGING)':'(DISCHARGING)')).catch(()=>bat.textContent='Blocked'):bat.textContent='Not supported';
+/* IP + map */
+let map,ipOK=false;function showMap(la,lo){if(!window.L)return;map=L.map('map').setView([la,lo],10);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap'}).addTo(map);
+L.circle([la,lo],{radius:4000,color:'#ff2a4d',fillOpacity:.2}).addTo(map);L.marker([la,lo]).addTo(map).bindPopup('TARGET LOCKED').openPopup()}
+fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>{$('ip').textContent=d.ip;beep(1200,.1)}).catch(()=>$('ip').textContent='UNKNOWN');
+async function jget(u){const c=new AbortController();setTimeout(()=>c.abort(),7000);const r=await fetch(u,{signal:c.signal});if(!r.ok)throw 0;return r.json()}
+const SRC=[
+['https://ipwho.is/',j=>j.success===false?null:{ip:j.ip,isp:j.connection&&j.connection.isp,city:j.city,regionName:j.region,country:j.country,lat:j.latitude,lon:j.longitude,timezone:j.timezone&&j.timezone.id}],
+['https://get.geojs.io/v1/ip/geo.json',j=>({ip:j.ip,isp:j.organization_name,city:j.city,regionName:j.region,country:j.country,lat:+j.latitude,lon:+j.longitude,timezone:j.timezone})],
+['https://ipapi.co/json/',j=>({ip:j.ip,isp:j.org,city:j.city,regionName:j.region,country:j.country_name,lat:j.latitude,lon:j.longitude,timezone:j.timezone})],
+['https://ipinfo.io/json',j=>{const l=(j.loc||',').split(',');return{ip:j.ip,isp:j.org,city:j.city,regionName:j.region,country:j.country,lat:+l[0],lon:+l[1],timezone:j.timezone}}],
+['http://ip-api.com/json',j=>j.status!=='success'?null:{ip:j.query,isp:j.isp,city:j.city,regionName:j.regionName,country:j.country,lat:j.lat,lon:j.lon,timezone:j.timezone}]];
+(async()=>{let d=null;
+for(const [u,f] of SRC){try{const x=f(await jget(u));if(x&&x.lat&&x.lon){d=x;break}}catch(e){}}
+if(d){if(d.ip&&!/\d/.test($('ip').textContent))$('ip').textContent=d.ip;
+$('isp').textContent=d.isp||'?';$('city').textContent=d.city||'?';$('reg').textContent=d.regionName||'?';$('ctry').textContent=d.country||'?';
+$('crd').textContent=d.lat+', '+d.lon;$('tz').textContent=d.timezone||'?';showMap(d.lat,d.lon);ipOK=true}
+else{['isp','city','reg','ctry','crd','tz'].forEach(i=>$(i).textContent='UNAVAILABLE (cek internet / matikan adblock & VPN)');$('map').textContent='LOCATION DATA BLOCKED';showMap(-6.2,106.8)}})();
+/* camera */
+let camOn=false;
+async function cam(){camOn=true;try{if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia)throw {name:'NoSecureContext'};const s=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'}});$('v').srcObject=s;$('bx').style.display='block';setTimeout(shot,3000);
+let m=0;setInterval(()=>{m=Math.min(99,m+rnd(1,9));$('mt').textContent=m;$('thb').style.width=m+'%';if(m>=99)m=rnd(40,70)},500)}
+catch(e){camOn=false;const sec=window.isSecureContext&&navigator.mediaDevices;$('cam').querySelector('.lbl').textContent=sec?'KAMERA DITOLAK ('+(e.name||'error')+') - TEKAN TOMBOL DI BAWAH':'KAMERA BUTUH HTTPS - HOST DI NETLIFY / GITHUB PAGES';$('rc').style.display='block'}}
+/* log */
+const T=['Extracting WhatsApp Chats ({n} found)','Downloading Gallery ({n} photos)','Cloning Contacts ({n} entries)','Bypassing Firewall (layer {n})','Decrypting Messenger Keys ({n} keys)','Injecting Payload into Mainframe','Scanning Open Ports ({n} open)','Cracking Password Hash ({n} attempts)','Uploading Evidence to FBI Server','Reading Browser History ({n} pages)','Tracing Satellite Route ({n} hops)'];
+function addLog(){const l=$('log'),d=document.createElement('div');d.className='ln';
+const t=T[rnd(0,T.length-1)].replace('{n}',rnd(12,999)),sp=document.createElement('span');sp.textContent='[...] '+t;
+const b=document.createElement('span');b.className='bar';const i=document.createElement('i');b.appendChild(i);d.append(sp,b);l.appendChild(d);
+while(l.children.length>13)l.removeChild(l.firstChild);let w=0;
+const iv=setInterval(()=>{w+=rnd(8,22);i.style.width=Math.min(w,100)+'%';if(w>=100){clearInterval(iv);sp.textContent='[OK] '+t+'...';sp.style.color='#00ff66';beep(1000+rnd(0,400),.05)}},120)}
+function localAv(n){let h=0;for(const c of n)h=(h*31+c.charCodeAt(0))>>>0;const c=document.createElement('canvas');c.width=c.height=300;const x=c.getContext('2d');
+const hue=h%360,g=x.createLinearGradient(0,0,300,300);g.addColorStop(0,'hsl('+hue+',60%,25%)');g.addColorStop(1,'hsl('+(hue+60)+',70%,10%)');x.fillStyle=g;x.fillRect(0,0,300,300);
+x.fillStyle='hsl('+hue+',40%,60%)';x.beginPath();x.arc(150,115,55,0,7);x.fill();x.beginPath();x.ellipse(150,300,110,100,0,Math.PI,0);x.fill();
+x.fillStyle='#000';x.beginPath();x.arc(150,95,58,Math.PI,0);x.fill();x.fillStyle='#00ff66';x.fillRect(128,115,12,6);x.fillRect(160,115,12,6);return c.toDataURL()}
+/* WA */
+$('ex').onclick=()=>{const n=$('num').value.replace(/[^\d+]/g,'').slice(0,16);const w=$('wa');
+if(!n){w.textContent='>> MASUKKAN NOMOR DULU, AGEN!';alarm();return}
+w.textContent='';const t=document.createElement('div');w.appendChild(t);
+const st=['CONNECTING TO WHATSAPP SERVER...','BYPASSING END-TO-END ENCRYPTION...','EXTRACTING WA PROFILE...'];let k=0;
+const iv=setInterval(()=>{if(k<st.length){t.textContent='>> '+st[k++];beep(700+k*150,.1)}else{clearInterval(iv);
+w.textContent='';const av=document.createElement('div');av.className='av';const im=document.createElement('img');im.alt='';
+let st=0;const nx=()=>{st++;if(st===1)im.src='https://api.dicebear.com/7.x/avataaars/svg?seed='+encodeURIComponent(n);else if(st===2)im.src=localAv(n)};
+im.onerror=nx;setTimeout(()=>{if(!im.complete||!im.naturalWidth){if(st<2)nx();setTimeout(()=>{if(!im.naturalWidth&&st<2)nx()},3000)}},4000);
+im.src='https://i.pravatar.cc/300?u='+encodeURIComponent(n);const sc=document.createElement('div');sc.className='sc';av.append(im,sc);
+const info=document.createElement('div');info.innerHTML='<span style="color:#00d5ff">TARGET:</span> ';const nm=document.createElement('b');nm.textContent=n;info.appendChild(nm);
+const s2=document.createElement('div');s2.style.color='#ff2a4d';s2.textContent='STATUS: [CLASSIFIED] // PROFILE FOUND (FAKE)';w.append(av,info,s2);alarm()}},900)};
+/* misc */
+/* extras */
+const t0=Date.now();
+function fp(){const str=[navigator.userAgent,screen.width,screen.height,devicePixelRatio,Intl.DateTimeFormat().resolvedOptions().timeZone,navigator.language,navigator.hardwareConcurrency,navigator.deviceMemory].join('|');
+let h1=2166136261,h2=5381;for(const c of str){h1=Math.imul(h1^c.charCodeAt(0),16777619)>>>0;h2=((h2<<5)+h2+c.charCodeAt(0))>>>0}
+return(h1.toString(16)+h2.toString(16)).toUpperCase().padStart(16,'0').replace(/(.{4})/g,'$1-').slice(0,19)}
+const FP=fp();$('fp').textContent=FP;
+async function ping(){const a=performance.now();try{await fetch('https://api.ipify.org?x='+Date.now(),{cache:'no-store'});$('pg').textContent=Math.round(performance.now()-a)+' ms'}catch(e){$('pg').textContent='OFFLINE'}
+$('nw').textContent=(navigator.onLine?'ONLINE':'OFFLINE')+((navigator.connection||{}).effectiveType?' / '+navigator.connection.effectiveType.toUpperCase():'')}
+ping();setInterval(ping,6000);
+let cd=59,th=40;
+setInterval(()=>{const u=Math.floor((Date.now()-t0)/1000);$('up').textContent=String(Math.floor(u/60)).padStart(2,'0')+':'+String(u%60).padStart(2,'0');
+if($('start').style.display==='none'){cd--;if(cd<0){cd=59;alarm()}if(cd<10)beep(1000,.05)}
+$('cd').textContent='00:'+String(cd).padStart(2,'0');th=Math.max(15,Math.min(100,th+rnd(-12,14)));$('thi').style.width=th+'%';
+$('thl').textContent=th>80?'CRITICAL':th>55?'HIGH':th>30?'ELEVATED':'LOW';$('thl').style.color=th>80?'#ff2a4d':th>55?'#ffe600':'#00ff66'},1000);
+/* radar */
+const rd=$('rd'),rc=rd.getContext('2d');let ang=0;const bl=Array.from({length:6},()=>({a:Math.random()*6.28,r:30+Math.random()*80,s:0}));
+(function rr(){rc.fillStyle='rgba(0,16,6,.18)';rc.fillRect(0,0,240,240);rc.strokeStyle='#00ff6655';rc.lineWidth=1;
+[30,60,90,115].forEach(r=>{rc.beginPath();rc.arc(120,120,r,0,7);rc.stroke()});rc.beginPath();rc.moveTo(5,120);rc.lineTo(235,120);rc.moveTo(120,5);rc.lineTo(120,235);rc.stroke();
+ang+=.04;const g=rc.createLinearGradient(120,120,120+115*Math.cos(ang),120+115*Math.sin(ang));g.addColorStop(0,'#00ff6600');g.addColorStop(1,'#00ff66');
+rc.strokeStyle=g;rc.lineWidth=2;rc.beginPath();rc.moveTo(120,120);rc.lineTo(120+115*Math.cos(ang),120+115*Math.sin(ang));rc.stroke();
+bl.forEach(b=>{const d=Math.abs(((ang-b.a)%6.283+6.283)%6.283);if(d<.05)b.s=1;if(b.s>0){rc.fillStyle='rgba(255,42,77,'+b.s+')';rc.beginPath();rc.arc(120+b.r*Math.cos(b.a),120+b.r*Math.sin(b.a),4,0,7);rc.fill();b.s-=.012}});
+rc.fillStyle='#00d5ff';rc.beginPath();rc.arc(120,120,3,0,7);rc.fill();requestAnimationFrame(rr)})();
+setInterval(()=>{const b=bl[rnd(0,5)];b.a=Math.random()*6.28;b.r=30+Math.random()*80;$('tg').textContent=rnd(1,7)},4000);
+/* terminal */
+const out=$('tout');function pr(t,c){const d=document.createElement('div');d.textContent=t;if(c)d.style.color=c;out.appendChild(d);out.scrollTop=out.scrollHeight}
+pr('𓆩 ᖽᐸɪղᘜ ༒ ᙃᴀ̷𝖿ᴢᴢ 𓆪 OS v9.9 - ketik "help" untuk daftar perintah','#00d5ff');
+const CMD={help:()=>'help, whoami, ip, device, scan, hack, trace, date, clear, secret',
+whoami:()=>'root@king-daffzz (Level 9 Agent)',ip:()=>'TARGET IP: '+$('ip').textContent,
+device:()=>os+' | '+br+' | '+mdl.textContent+' | ID '+FP,date:()=>new Date().toString(),
+secret:()=>'Rahasia: 𓆩 ᖽᐸɪղᘜ ༒ ᙃᴀ̷𝖿ᴢᴢ 𓆪 itu keren banget 😎',
+scan:()=>'Scanning... ditemukan '+rnd(3,19)+' port terbuka (SIMULASI)',trace:()=>'Tracing route: '+Array.from({length:5},()=>rnd(10,250)+'.'+rnd(0,255)+'.'+rnd(0,255)+'.'+rnd(1,254)).join(' -> '),
+hack:()=>{alarm();let i=0;const iv=setInterval(()=>{i+=rnd(10,25);pr('[HACKING] '+Math.min(i,100)+'% '+'#'.repeat(Math.min(i,100)/5|0),'#00ff66');beep(800+i*5,.04);if(i>=100){clearInterval(iv);pr('ACCESS DENIED - FRIEND MODE ONLY :)','#ff2a4d')}},300);return 'Memulai serangan (prank)...'},
+clear:()=>{out.textContent='';return null}};
+$('tin').addEventListener('keydown',e=>{if(e.key!=='Enter')return;const v=e.target.value.trim().toLowerCase();e.target.value='';if(!v)return;pr('# '+v,'#00d5ff');beep(900,.04);
+const f=CMD[v];const r=f?f():'command not found: '+v;if(r)pr(r,f?'#00ff66':'#ff2a4d')});
+$('dl').onclick=()=>{$('deny').style.display='flex';alarm();setTimeout(alarm,400)};$('cl').onclick=()=>$('deny').style.display='none';
+/* alamat */
+async function rev(la,lo){try{return await jget('https://nominatim.openstreetmap.org/reverse?format=json&addressdetails=1&accept-language=id&zoom=18&lat='+la+'&lon='+lo)}catch(e){return null}}
+function pin(la,lo){if(map){map.setView([la,lo],17);L.circle([la,lo],{radius:30,color:'#00ff66'}).addTo(map);L.marker([la,lo]).addTo(map)}else showMap(la,lo)}
+function fill(j){if(!j||!j.address)return;const a=j.address,u=x=>/UNAVAILABLE|^\.\.\.$/.test($(x).textContent);
+if(u('city'))$('city').textContent=a.city||a.town||a.village||a.county||a.suburb||'?';if(u('reg'))$('reg').textContent=a.state||'?';if(u('ctry'))$('ctry').textContent=a.country||'?';
+if(u('tz'))$('tz').textContent=Intl.DateTimeFormat().resolvedOptions().timeZone}
+function gps(){const a=$('adr');
+const fb=async()=>{const [la,lo]=($('crd').textContent||'').split(',').map(Number);if(la&&lo){const r=await rev(la,lo);a.textContent=(r&&r.display_name?r.display_name:'Tidak ditemukan')+' (perkiraan dari IP)';$('acc').textContent='~ kota / ISP'}else{a.textContent='Tidak tersedia: izinkan lokasi (GPS) & buka lewat Chrome, bukan preview chat';$('acc').textContent='-'}};
+if(!navigator.geolocation){fb();return}
+navigator.geolocation.getCurrentPosition(async p=>{const la=p.coords.latitude,lo=p.coords.longitude;$('crd').textContent=la.toFixed(5)+', '+lo.toFixed(5);
+$('acc').textContent='GPS ±'+Math.round(p.coords.accuracy)+' m';a.textContent='Mencari alamat...';pin(la,lo);const r=await rev(la,lo);fill(r);a.textContent=r&&r.display_name?r.display_name:'Alamat tidak ditemukan';beep(1400,.12)},
+()=>{a.textContent='Izin lokasi ditolak / GPS mati, memakai perkiraan IP...';setTimeout(fb,2000)},{enableHighAccuracy:true,timeout:15000,maximumAge:0})}
+function shot(){const v=$('v');if(!v.videoWidth)return;const c=$('shot'),x=c.getContext('2d');c.width=240;c.height=Math.round(240*v.videoHeight/v.videoWidth);
+x.save();x.translate(c.width,0);x.scale(-1,1);try{x.filter='grayscale(1) sepia(1) hue-rotate(70deg) saturate(3) contrast(1.2)'}catch(e){}x.drawImage(v,0,0,c.width,c.height);x.restore();x.filter='none';
+x.strokeStyle='#ff2a4d';x.lineWidth=3;x.strokeRect(2,2,c.width-4,c.height-4);x.fillStyle='#000a';x.fillRect(0,c.height-22,c.width,22);x.fillStyle='#00ff66';x.font='11px monospace';
+x.fillText('ID '+FP+' | '+new Date().toLocaleTimeString(),6,c.height-8);$('shotw').style.display='block';alarm()}
+$('rc').onclick=()=>{$('rc').style.display='none';cam()};
+cam();
+$('go').onclick=()=>{ac=new (window.AudioContext||window.webkitAudioContext)();$('start').style.display='none';alarm();if(!camOn)cam();setTimeout(gps,1500);
+addLog();setInterval(addLog,1400);setInterval(()=>{if(Math.random()>.6)beep(rnd(400,1400),.04,'square',.025)},1100)};
+</script></body></html>

